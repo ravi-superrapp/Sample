@@ -1,33 +1,45 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const users = [
-        { name: 'Alice', count: 25 },
-        { name: 'Bob', count: 18 },
-        { name: 'Charlie', count: 12 },
-        { name: 'David', count: 8 },
-        { name: 'Eve', count: 15 },
-        { name: 'Frank', count: 5 },
-        { name: 'Grace', count: 22 },
-        { name: 'Heidi', count: 9 },
-        { name: 'Ivan', count: 11 },
-        { name: 'Judy', count: 3 },
-    ];
-
     const leaderboard = document.getElementById('leaderboard');
     const others = document.getElementById('others');
+    const prizeMessage = document.querySelector('.prize-message');
+    const prizeImages = document.querySelector('.prize-images');
 
-    const topPerformers = users.filter(user => user.count >= 10);
-    const otherUsers = users.filter(user => user.count < 10);
+    prizeMessage.addEventListener('click', () => {
+        prizeImages.style.display = prizeImages.style.display === 'flex' ? 'none' : 'flex';
+    });
 
-    topPerformers.sort((a, b) => b.count - a.count);
-    otherUsers.sort((a, b) => b.count - a.count);
+    const fetchData = async () => {
+        try {
+            const response = await fetch('https://zvt2bbpn-3600.inc1.devtunnels.ms/leaderboard');
+            const users = await response.json();
 
-    const createTable = (data) => {
+            const topPerformers = users.filter(user => user.count >= 10);
+            const otherUsers = users.filter(user => user.count < 10);
+
+            topPerformers.sort((a, b) => b.count - a.count);
+            otherUsers.sort((a, b) => b.count - a.count);
+
+            renderTable(leaderboard, topPerformers, true);
+            renderTable(others, otherUsers, false);
+        } catch (error) {
+            console.error('Error fetching leaderboard data:', error);
+            leaderboard.innerHTML = '<p>Could not load leaderboard data.</p>';
+        }
+    };
+
+    const renderTable = (element, data, isLeaderboard) => {
+        element.innerHTML = ''; // Clear existing content
+        const table = createTable(data, isLeaderboard);
+        element.appendChild(table);
+    };
+
+    const createTable = (data, isLeaderboard) => {
         const table = document.createElement('table');
         const thead = document.createElement('thead');
         const tbody = document.createElement('tbody');
 
         const headerRow = document.createElement('tr');
-        ['S.No.', 'Name', 'Count'].forEach(text => {
+        ['Rank', 'Name', 'Count'].forEach(text => {
             const th = document.createElement('th');
             th.textContent = text;
             headerRow.appendChild(th);
@@ -36,8 +48,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
         data.forEach((user, index) => {
             const row = document.createElement('tr');
+            let rankCell = `<td>${index + 1}</td>`;
+
+            if (isLeaderboard && index < 3) {
+                const medals = ['🥇', '🥈', '🥉'];
+                rankCell = `<td>${medals[index]}</td>`;
+            }
+
             row.innerHTML = `
-                <td>${index + 1}</td>
+                ${rankCell}
                 <td>${user.name}</td>
                 <td>${user.count}</td>
             `;
@@ -49,6 +68,5 @@ document.addEventListener('DOMContentLoaded', () => {
         return table;
     };
 
-    leaderboard.appendChild(createTable(topPerformers));
-    others.appendChild(createTable(otherUsers));
+    fetchData();
 });

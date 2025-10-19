@@ -4,12 +4,27 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Leaderboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
-        <h1>Leaderboard</h1>
+        <div class="header">
+            <h1>Leaderboard</h1>
+            <div class="info-icon">
+                <i class="fas fa-info-circle"></i>
+                <div class="tooltip">Minimum 10 referrals required to be on the leaderboard.</div>
+            </div>
+        </div>
         <div id="leaderboard"></div>
+        <div class="prize-section">
+            <p class="prize-message">Top 3 users win prizes! Click to see.</p>
+            <div class="prize-images">
+                <img src="https://via.placeholder.com/150" alt="Prize 1">
+                <img src="https://via.placeholder.com/150" alt="Prize 2">
+                <img src="https://via.placeholder.com/150" alt="Prize 3">
+            </div>
+        </div>
         <h2>Others</h2>
         <div id="others"></div>
     </div>
